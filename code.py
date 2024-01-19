@@ -135,20 +135,10 @@ while True:
                     
                     # I would have used a match case statement here but apparently circuit python doesn't
                     # support them so I had to make this which I'm not the most proud of
+                    characteristicProperties = ["Write No Response", "Write", "Read", "Notify", "Indicate", "Broadcast"]
                     for i in range(0, 6):
                         if properties[i] == '1':
-                            if (i == 0):
-                                print("Detected Characteristic Property: Write No Response")
-                            elif (i == 1):
-                                print("Detected Characteristic Property: Write")
-                            elif (i == 2):
-                                print("Detected Characteristic Property: Read")
-                            elif (i == 3):
-                                print("Detected Characteristic Property: Notify")
-                            elif (i == 4):
-                                print("Detected Characteristic Property: Indicate")
-                            elif (i == 5):
-                                print("Detected Characteristic Property: Broadcast")
+                            print("Detected Characteristic Property: " + characteristicProperties[i])
                     
                     # This writes the value to the peripheral (it has to be sent as a byte array)
                     characteristic.value = bytes(str(adder), 'utf-8')
