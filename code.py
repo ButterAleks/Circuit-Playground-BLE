@@ -33,6 +33,9 @@ radio = BLERadio()
 ## detected_devices will contain the addresses of devices that actually respond back when being found
 detected_devices = dict()
 
+## This is a testing number for just seeing if I can send messages back and forth correctly
+adder = 0
+
 ## This tracks the total amount of advertisements being collected so that way we can stop the loop from accumulating
 ## too many devices so that way we don't run out of memory
 amount_of_advertisements = 0
@@ -98,9 +101,6 @@ while True:
         # We also set ble because radio.connect returns a BLEConnection that we can use to disconnect from
         ble = radio.connect(detected_devices["Test"])
         print("Connected to Test:", detected_devices["Test"], ":", radio.connected)
-    
-    ## This is a testing number for just seeing if I can send messages back and forth correctly
-    adder = 0
                 
     # Catch any potential bluetooth errors if this doesn't work
     try:
