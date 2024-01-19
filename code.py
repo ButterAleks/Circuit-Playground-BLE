@@ -5,6 +5,9 @@
 import time
 import board
 import digitalio
+from _bleio import Service
+from _bleio import UUID
+from _bleio import BluetoothError
 from adafruit_ble import BLERadio
 from adafruit_ble import BLEConnection
 from adafruit_circuitplayground import cp
@@ -60,7 +63,7 @@ for advertisement in radio.start_scan(ProvideServicesAdvertisement, Advertisemen
     
     # If detected advertisements have a name and we don't have 50 or more collected then we should add it as that's
     # a device we can connect to without using up all our memory
-    if advertisement.complete_name == None or amount_of_advertisements >= 50:
+    if advertisement.complete_name == None or amount_of_advertisements >= 10:
         continue;
     
     # Increment to have an accurate amount of advertisements that passed the check
@@ -96,8 +99,74 @@ while True:
         ble = radio.connect(detected_devices["Test"])
         print("Connected to Test:", detected_devices["Test"], ":", radio.connected)
     
+    ## This is a testing number for just seeing if I can send messages back and forth correctly
+    adder = 0
+                
+    # Catch any potential bluetooth errors if this doesn't work
+    try:
+        # Make sure our connections are good
+        if ble and radio.connected and ble.connected:
+            
+            # The current peripheral being used has a custom service so I have to specify that service's unique UUID
+            results = ble._bleio_connection.discover_remote_services(iter([UUID("0000ffe0-0000-1000-8000-00805f9b34fb")]))
+            
+            # From the results
+            for result in results:
+                # Print the service that we should have
+                print(result)
+                
+                # Look at the service's characteristics
+                for characteristic in result.characteristics:
+                    # Print the characteristic that we should have
+                    print(characteristic)
+                    
+                    # Determine properties that the characteristic has (doesn't do anything right now but it's here for fun)
+                    # The way this value works is that it's just a 6 bit integer with each bit representing a property of the characteristic
+                    # the most significant bit represents WRITE_NO_RESPONSE, the bit after represents WRITE, and so as seen within the for loop
+                    # below
+                    
+                    # This code seperates the identifying binary header since I already know it's binary and need to ditch it to work with it.
+                    # It also adds any leading zeros that are missing since for some reason it was 5
+                    # bit when testing and I assume it's because the leading bit to represent
+                    # WRITE_NO_RESPONSE was 0 so it was just simplified but in order to work with this
+                    # we need all 6 bits so I added it back in
+                    properties = bin(characteristic.properties)[2:7]
+                    properties = ("0" * (6 - len(properties))) + properties
+                    
+                    # I would have used a match case statement here but apparently circuit python doesn't
+                    # support them so I had to make this which I'm not the most proud of
+                    for i in range(0, 6):
+                        if properties[i] == '1':
+                            if (i == 0):
+                                print("Detected Characteristic Property: Write No Response")
+                            elif (i == 1):
+                                print("Detected Characteristic Property: Write")
+                            elif (i == 2):
+                                print("Detected Characteristic Property: Read")
+                            elif (i == 3):
+                                print("Detected Characteristic Property: Notify")
+                            elif (i == 4):
+                                print("Detected Characteristic Property: Indicate")
+                            elif (i == 5):
+                                print("Detected Characteristic Property: Broadcast")
+                    
+                    # This writes the value to the peripheral (it has to be sent as a byte array)
+                    characteristic.value = bytes(str(adder), 'utf-8')
+                    
+                    # This reads the value back from the peripheral (I made it so that the
+                    # peripheral just echoes any message sent to it back to the host)
+                    print(characteristic.value.decode())
+                    
+                    # Increment the test number
+                    adder += 1
+                    
+    except BluetoothError:
+        # If we get an error than automatically disconnect
+        ble.disconnect()
+        print("Error Detected!")
+    
     # If we press button B then disconnect and log that we did that
     if cp.button_b:
-        if ble != None:
+        if ble != None and radio.connected:
             ble.disconnect()
-            print("Disconnected:", not radio.connected)
+            print("Disconnected")
