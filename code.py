@@ -93,9 +93,17 @@ def create_packet_buffer(characteristic: Characteristic, buffer_size: int, max_p
     else:
         raise RoleError("ERROR: Cannot create buffer to write to a characteristic when characteristic does not allow for writing!")
 
-def read_from_characteristic(read_buffer: CharacteristicBuffer) -> string:
+# This reads with a characteristic buffer
+def read_from_characteristic(read_buffer: CharacteristicBuffer) -> bytes:
     if get_bluetooth_connection_state():
-        return read_buffer.readline().decode()
+        return read_buffer.readline()
+    else:
+        raise Exception("ERROR: Not connected to another device!")
+    
+# This reads with the direct value from the characteristic
+def read_from_characteristic(characteristic: Characteristic) -> bytearray:
+    if get_bluetooth_connection_state():
+        return characteristic.value
     else:
         raise Exception("ERROR: Not connected to another device!")
 
@@ -109,6 +117,21 @@ def write_to_characteristic(write_buffer: PacketBuffer, message: string, max_len
             # Clear the buffer then write the actual message to prevent old messages from bleeding over
             write_buffer.write(bytes((" " * (max_length - 1)) + "\n", 'utf-8'))
         return write_buffer.write(bytes(message, 'utf-8'))
+    else:
+        raise Exception("ERROR: Not connected to another device!")
+
+# characteristic -> Characteristic: The characteristic to directly write to
+# message -> string: The message to send to the buffer
+# (optional) max_length -> int = 20: The max length of a packet sent with the buffer
+# (optional) clear_buffer -> bool = True: Whether or not to clear the buffer before sending the specified message
+def write_to_characteristic(characteristic: Characteristic, message: string, max_length: int = 20, clear_buffer: bool = True) -> bytearray:
+    if get_bluetooth_connection_state():
+        if clear_buffer:
+            # Clear the buffer then write the actual message to prevent old messages from bleeding over
+            characteristic.value = bytes((" " * (max_length - 1)) + "\n", 'utf-8')
+        characteristic.value = bytes(message, 'utf-8')
+        
+        return characteristic.value
     else:
         raise Exception("ERROR: Not connected to another device!")
 
@@ -329,17 +352,14 @@ while True:
     bluetooth_mode_previous = bluetooth_mode_peripheral
     
     try:
-        # Very buggy and barely working code for reading and writing data to and from a characteristic
+        # Got this code working better now after making a lot of mistakes with it
         if get_bluetooth_connection_state():
             if h_read_buffer != None:
-                print(h_characteristic.value.decode())
-                print(int.from_bytes(h_characteristic.value, "little"))
+                print(read_from_characteristic(h_characteristic).decode())
                 #print(read_from_characteristic(h_read_buffer))
             if h_write_buffer != None:
-                write_to_characteristic(h_write_buffer, str(adder) + "\n")
-                #h_characteristic.value = bytes(str(adder), 'utf-8')
-                #print(read_from_characteristic(read_buffer))
-                #write_to_characteristic(write_buffer, str(adder))
+                write_to_characteristic(h_characteristic, str(adder) + "\n")
+                #write_to_characteristic(h_write_buffer, str(adder) + "\n")
             adder += 1
         else:
             if h_read_buffer != None:
@@ -426,20 +446,20 @@ while True:
                         if int(user_service) == service_uuids[i]:
                             h_service = h_services[i]
                             break
-                
+                        
                 # Get the first characteristic that allows us to read and or write to it
-                for i in range(0, len(h_service.characteristics)):
+                for i in range(len(h_service.characteristics)):
                     # Get the properties to check what the characteristic will let us do
                     properties = _convert_num_to_properties(h_service.characteristics[i].properties)
                     
                     # Check if we can read from this characteristic and if so then store it
-                    if properties[2] and h_characteristic == None:
+                    if properties[2] and h_service.characteristics[i] != None:
                         h_characteristic = h_service.characteristics[i]
                         h_read_buffer = create_characteristic_buffer(h_characteristic)
                     
                     # Check if we can write to this characteristic and if so then store it
-                    if (properties[0] or properties[1]) and h_characteristic == None:
-                       h_write_buffer = create_packet_buffer(h_characteristic, buffer_size=max_length, max_packet_size=max_length)
+                    if (properties[0] or properties[1]) and h_service.characteristics[i] != None:
+                        h_write_buffer = create_packet_buffer(h_service.characteristics[i], buffer_size=max_length, max_packet_size=max_length)
                 
                 #h_characteristic.set_cccd(notify=True)
             except BluetoothError:
