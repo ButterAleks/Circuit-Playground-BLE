@@ -94,7 +94,7 @@ def create_packet_buffer(characteristic: Characteristic, buffer_size: int, max_p
         raise RoleError("ERROR: Cannot create buffer to write to a characteristic when characteristic does not allow for writing!")
 
 # This reads with a characteristic buffer
-def read_from_characteristic(read_buffer: CharacteristicBuffer) -> bytes:
+def read_from_characteristic_with_buffer(read_buffer: CharacteristicBuffer) -> bytes:
     if get_bluetooth_connection_state():
         return read_buffer.readline()
     else:
@@ -111,7 +111,7 @@ def read_from_characteristic(characteristic: Characteristic) -> bytearray:
 # message -> string: The message to send to the buffer
 # (optional) max_length -> int = 20: The max length of a packet sent with the buffer
 # (optional) clear_buffer -> bool = True: Whether or not to clear the buffer before sending the specified message
-def write_to_characteristic(write_buffer: PacketBuffer, message: string, max_length: int = 20, clear_buffer: bool = True) -> int:
+def write_to_characteristic_with_buffer(write_buffer: PacketBuffer, message: string, max_length: int = 20, clear_buffer: bool = True) -> int:
     if get_bluetooth_connection_state():
         if clear_buffer:
             # Clear the buffer then write the actual message to prevent old messages from bleeding over
@@ -139,9 +139,9 @@ def write_to_characteristic(characteristic: Characteristic, message: string, max
 # Peripheral Functions
 #
 
-def start_advertising(Advertisement):
+def start_advertising(advertisement: Advertisement):
     if not get_bluetooth_advertising_state() and bluetooth_mode_peripheral:
-        _radio.start_advertising(ProvideServicesAdvertisement(service))
+        _radio.start_advertising(advertisement)
     elif not bluetooth_mode_peripheral:
         raise RoleError("ERROR: Device is not acting as peripheral! Cannot work with advertisements!")
     else:
@@ -172,35 +172,33 @@ def start_scanning(advertisements_to_collect: int = 10, buffer_size: int = 512, 
     if not bluetooth_mode_peripheral:
         detected_devices = dict()
         amount_of_advertisements = 0
-        try:
-            for advertisement in _radio.start_scan(ProvideServicesAdvertisement, Advertisement, buffer_size=buffer_size, extended=extended, timeout=timeout, interval=interval, window=window, minimum_rssi=minimum_rssi, active=active):
+        
+        for advertisement in _radio.start_scan(ProvideServicesAdvertisement, Advertisement, buffer_size=buffer_size, extended=extended, timeout=timeout, interval=interval, window=window, minimum_rssi=minimum_rssi, active=active):
             
-                # If detected advertisements have a name and we don't have 50 or more collected then we should add it as that's
-                # a device we can connect to without using up all our memory
-                if (filter_no_name and advertisement.complete_name == None) or amount_of_advertisements >= advertisements_to_collect:
-                    continue;
+            # If detected advertisements have a name and we don't have 50 or more collected then we should add it as that's
+            # a device we can connect to without using up all our memory
+            if (filter_no_name and advertisement.complete_name == None) or amount_of_advertisements >= advertisements_to_collect:
+                continue;
             
-                # Increment to have an accurate amount of advertisements that passed the check
-                amount_of_advertisements += 1
+            # Increment to have an accurate amount of advertisements that passed the check
+            amount_of_advertisements += 1
             
-                # Print info about a detected device if we're about to add it
-                if print_debug and ((not filter_no_name) + (detected_devices.get(advertisement.complete_name) == None)) >= 1:
-                    print(advertisement.address, advertisement)
-                    print("Short Name:", advertisement.short_name)
-                    print("Full Name:", advertisement.complete_name)
-                    print("Transmit Power:", advertisement.tx_power)
-                    print("Appearance:", advertisement.appearance)
-                    print("RSSI:", advertisement.rssi)
-                    print(repr(advertisement) + "\n")
+            # Print info about a detected device if we're about to add it
+            if print_debug and ((not filter_no_name) + (detected_devices.get(advertisement.complete_name) == None)) >= 1:
+                print(advertisement.address, advertisement)
+                print("Short Name:", advertisement.short_name)
+                print("Full Name:", advertisement.complete_name)
+                print("Transmit Power:", advertisement.tx_power)
+                print("Appearance:", advertisement.appearance)
+                print("RSSI:", advertisement.rssi)
+                print(repr(advertisement) + "\n")
             
-                # If the advertisement responds back it's likely a device and if we don't already have it we should add it
-                if advertisement.scan_response and ((not filter_no_name) + (detected_devices.get(advertisement.complete_name) == None)) >= 1:
-                    detected_devices[advertisement.complete_name] = advertisement.address
+            # If the advertisement responds back it's likely a device and if we don't already have it we should add it
+            if advertisement.scan_response and ((not filter_no_name) + (detected_devices.get(advertisement.complete_name) == None)) >= 1:
+                detected_devices[advertisement.complete_name] = advertisement.address
             
-            if print_debug:
-                print("Number of Collected Advertisements:", amount_of_advertisements)
-        except MemoryError:
-            raise MemoryError("Too much data! Change your scan settings to hold less data!")
+        if print_debug:
+            print("Number of Collected Advertisements:", amount_of_advertisements)
         
         return detected_devices
     else:
@@ -300,7 +298,7 @@ h_write_buffer = None
 
 ## These are variables for a peripheral to advertisement with
 p_service = create_service("0x185A")
-p_characteristic = add_characteristic_to_service(p_service, "0x2BDE", properties=[True, False, True, True, False, True], max_length=max_length, fixed_length=True)
+p_characteristic = add_characteristic_to_service(p_service, "0x2BDE", properties=[True, False, True, True, False, True], max_length=max_length)
 p_read_buffer = create_characteristic_buffer(p_characteristic)
 p_write_buffer = create_packet_buffer(p_characteristic, buffer_size=max_length, max_packet_size=max_length)
 
@@ -356,18 +354,26 @@ while True:
         if get_bluetooth_connection_state():
             if h_read_buffer != None:
                 print(read_from_characteristic(h_characteristic).decode())
-                #print(read_from_characteristic(h_read_buffer))
+                #print(read_from_characteristic_with_buffer(h_read_buffer).decode())
             if h_write_buffer != None:
                 write_to_characteristic(h_characteristic, str(adder) + "\n")
-                #write_to_characteristic(h_write_buffer, str(adder) + "\n")
+                #write_to_characteristic_with_buffer(h_write_buffer, str(adder) + "\n")
+            
+            if p_read_buffer != None:
+                #print(read_from_characteristic(p_characteristic).decode())
+                print(read_from_characteristic_with_buffer(p_read_buffer).decode())
+            if p_write_buffer != None:
+                #write_to_characteristic(p_characteristic, str(adder) + "\n")
+                write_to_characteristic_with_buffer(p_write_buffer, str(adder) + "\n")
+                
             adder += 1
         else:
             if h_read_buffer != None:
                 h_read_buffer = None
             if h_write_buffer != None:
                 h_write_buffer = None
-    except:
-        print("ERROR: Something went wrong when working with data from another device!")
+    except Exception as e:
+        print("ERROR: Something went wrong when working with data from another device!\nException:", e, "\n")
 
     # If we press button A then begin advertising and or connecting to a device
     if cp.button_a:
@@ -392,12 +398,13 @@ while True:
                 for key in detected_devices.keys():
                     print(key)
                     #print(detected_devices[key])
-            except MemoryError:
+            except MemoryError as m:
                 # If we have a memory error tell the user and stop attempting connection
-                print("ERROR: Scanning Failed due to Memory Issues! (likely an overflow)\n")
+                print("ERROR: Scanning Failed due to Memory Issues!\nException:", e, "\n")
                 continue
             
             # Allow user to specify peripheral they want to connect to
+            is_exiting = False
             peripheral_name = None
             while peripheral_name == None:
                 # Let the user input text
@@ -408,7 +415,8 @@ while True:
                     peripheral_name = temp_name
                 elif temp_name.lower() == "exit":
                     # Exit if user decides aganist connecting
-                    print("Exiting scan...")
+                    is_exiting = True
+                    print("\nExiting scan...\n")
                     break
                 else:
                     # If the user doesn't actually provide a valid peripheral name then make sure we make them 
@@ -418,7 +426,8 @@ while True:
             try:
                 ble = connect(detected_devices, peripheral_name, True)
             except:
-                print("\nERROR: could not find device name.\n")
+                if not is_exiting:
+                    print("\nERROR: could not find device name.\n")
                 continue
                 
             try:
@@ -462,13 +471,13 @@ while True:
                         h_write_buffer = create_packet_buffer(h_service.characteristics[i], buffer_size=max_length, max_packet_size=max_length)
                 
                 #h_characteristic.set_cccd(notify=True)
-            except BluetoothError:
+            except BluetoothError as b:
                 # If we get a Bluetooth Error for whatever reason than tell the user something messed up
-                print("ERROR: something went wrong when setting up data transfer with peripheral.")
+                print("ERROR: something went wrong when setting up data transfer with peripheral.\nException:", b)
                 continue
-            except ConnectionError:
+            except ConnectionError as c:
                 # If we get a Connection Error than handle it and tell the user something messed up
-                print("ERROR: something went wrong when connecting to peripheral! Disconnecting...")
+                print("ERROR: something went wrong when connecting to peripheral! Disconnecting...\nException:", e)
                 if get_bluetooth_connection_state():
                     disconnect(ble)
                 continue
