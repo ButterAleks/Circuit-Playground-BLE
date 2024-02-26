@@ -29,7 +29,15 @@ h_characteristic = None
 h_read_buffer = None
 h_write_buffer = None
 
+# Note: This will create a new service every time the device runs the code again,
+# typically this wouldn't happen since the device would only activate once and then just run from there.
+# This unfortuantely results in the services piling up until you remove power from the circuit playground.
+# I haven't found a way to get around that yet to stop them from piling up.
+
 ## These are variables for a peripheral to advertisement with
+## I specifically use 0x185A to get make it an unidentified service.
+## I also use 0x2BDE to make the characteristic identified as a
+## Fixed String 64 characteristic as seen within bluetooth specifications
 p_service = ble_manager.create_service("0x185A")
 p_characteristic = ble_manager.add_characteristic_to_service(p_service, "0x2BDE", properties=[True, False, True, True, False, True], max_length=max_length)
 p_read_buffer = ble_manager.create_characteristic_buffer(p_characteristic)
@@ -57,7 +65,7 @@ while True:
     # Set bluetooth mode based on the position of the slideswitch on the board
     ble_manager.bluetooth_mode_peripheral = not cp.switch
     
-    # Make sure the bluetooth mode updates properly
+    # Make sure the bluetooth mode updates properly (I used trial and error to get the minimum number needed to check this)
     time.sleep(0.002)
     
     try:
@@ -74,13 +82,14 @@ while True:
                     ble_manager.stop_advertising()
                 
                 print("Swapped to Host Mode\n")
-        
+                
+        # Keep track of whether or not we switched modes
         bluetooth_mode_previous = ble_manager.bluetooth_mode_peripheral
     except Exception as e:
         print("ERROR: Something went wrong when switching Bluetooth Mode!\nException:", e, "\n")
      
     try:
-        # Got this code working better now after making a lot of mistakes with it
+        # This code reads and writes to the current characteristic based on whether or not we are in host or peripheral mode
         if ble_manager.get_bluetooth_connection_state():
             if h_read_buffer != None:
                 print(ble_manager.read_from_characteristic(h_characteristic).decode())
@@ -98,6 +107,7 @@ while True:
                 
             adder += 1
         else:
+            # This gets rid of reading and writing buffers if they aren't needed anymore
             if h_read_buffer != None:
                 h_read_buffer = None
             if h_write_buffer != None:
