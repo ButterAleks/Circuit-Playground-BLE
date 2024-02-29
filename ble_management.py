@@ -102,14 +102,14 @@ class BluetoothManager:
         if self.get_bluetooth_connection_state():
             return read_buffer.readline()
         else:
-            raise Exception("ERROR: Not connected to another device!")
+            raise Exception("ERROR: Something went wrong when reading from characteristic!")
         
     # This reads with the direct value from the characteristic
     def read_from_characteristic(self, characteristic: Characteristic) -> bytearray:
         if self.get_bluetooth_connection_state():
             return characteristic.value
         else:
-            raise Exception("ERROR: Not connected to another device!")
+            raise Exception("ERROR: Something went wrong when reading from characteristic!")
 
     # write_buffer -> PacketBuffer: The buffer to write to
     # message -> string: The message to send to the buffer
@@ -122,7 +122,7 @@ class BluetoothManager:
                 write_buffer.write(bytes((" " * (max_length - 1)) + "\n", 'utf-8'))
             return write_buffer.write(bytes(message, 'utf-8'))
         else:
-            raise Exception("ERROR: Not connected to another device!")
+            raise Exception("ERROR: Something went wrong when writing to characteristic!")
 
     # characteristic -> Characteristic: The characteristic to directly write to
     # message -> string: The message to send to the buffer
@@ -137,7 +137,7 @@ class BluetoothManager:
             
             return characteristic.value
         else:
-            raise Exception("ERROR: Not connected to another device!")
+            raise Exception("ERROR: Something went wrong when writing to characteristic!")
 
     #
     # Peripheral Functions
