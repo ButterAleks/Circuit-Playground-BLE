@@ -34,9 +34,10 @@
 > [!NOTE]
 > The propeties of a characteristic determine how the characteristic can be interacted with, they are as follows
 > | Bit (that makes up part of the number) | 6th (most significant bit) | 5th | 4th | 3rd | 2nd | 1st (least signficiant bit) |
-> | --- | --- | --- | --- | --- | --- | --- |
+> | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 > | Name | Write No Response | Write | Read | Notify | Indicate | Broadcast |
-> | --- | --- | --- | --- | --- | --- | --- |
-> | Description | | | | | | | |
+> | Description | Allows the value of the characteristic to be written too but no response will be sent back | Allows the value of the characteristic to be written too | Allows the value of the characteristic to be read from | Allows host to tell peripheral when it's value has been set by the host | Allows host to tell peripheral when it's value has been set by the host and makes the host wait for a response | Allows the characteristic to show up in advertising packets |
 - `convert_properties_to_num(properties: list) -> int`: This function takes in a list of 6 boolean values in order to convert them into a number to represent the properties of a characteristic for more information look at the note above
-  - 
+  - list: a list of 6 boolean values ordered in the same way the bits of the properties number are. Set them to true to activate the property or false to deactivate the property when using the number to set the properties of a characteristic
+- `convert_num_to_properties(num: int) -> list`: This function takes in a number in order to convert it into a list of 6 boolean values to represent the properties of a characteristic for more information look at the note at the top of this section
+  - num: a number that represents the properties of a characteristic. Each of the 6 bits of this number represent one of the six properties of the characteristic
