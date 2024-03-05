@@ -31,3 +31,12 @@
 
 
 ## Miscellaneous Functions
+> [!NOTE]
+> The propeties of a characteristic determine how the characteristic can be interacted with, they are as follows
+> | Bit (that makes up part of the number) | 6th (most significant bit) | 5th | 4th | 3rd | 2nd | 1st (least signficiant bit) |
+> | --- | --- | --- | --- | --- | --- | --- |
+> | Name | Write No Response | Write | Read | Notify | Indicate | Broadcast |
+> | --- | --- | --- | --- | --- | --- | --- |
+> | Description | | | | | | | |
+- `convert_properties_to_num(properties: list) -> int`: This function takes in a list of 6 boolean values in order to convert them into a number to represent the properties of a characteristic for more information look at the note above
+  - 
