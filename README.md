@@ -33,11 +33,11 @@
   - (optional) __buffer_size: int__ _= 512_: This the amount of bytes the buffer that holds the collected advertisement data has.
   - (optional) __extended: bool__ _= False_: When set to true extended advertising packets are supported, it's also recommended that you increase buffer_size if this is set to true
   - (optional) __timeout: float__ _= None_: How long until the scan automatically stops, if None then you'll need to call stop_scanning() in order to stop the scan
-  > [!IMPORTANT]
-  > This value must be inbetween the range of 0.025 - 40.959375
+> [!IMPORTANT]
+> This value must be inbetween the range of 0.025 - 40.959375
   - (optional) __interval: float__ _= 0.1_: The interval of time between two consecutive scan windows.
-  > [!IMPORTANT]
-  > This value must be <= the value of interval
+> [!IMPORTANT]
+> This value must be <= the value of interval
   - (optional) __window: float__ _= 0.1_: The duration in seconds to scan a BLE channel.
   - (optional) __minimum_rssi: int__ _= -80_: The minimum rssi of devices to return
   - (optional) __filter_no_name: bool__ _= True_: If true this will filter out any advertisements that don't have a name
@@ -57,8 +57,8 @@
 > [!IMPORTANT]
 > This function requires a peripheral device to be connected in order to work!
 - `discover_device_services(filters: list = []) -> tuple`: This function will return a tuple of discovered services found from a connected device.
-  > [!NOTE]
-  > The Bluetooth Specifications are just general guidelines. This means that a specific service may not contain what you expect or may not even be within the specifications. This is important to be aware of if you're struggling to find the data you want.
+> [!NOTE]
+> The Bluetooth Specifications are just general guidelines. This means that a specific service may not contain what you expect or may not even be within the specifications. This is important to be aware of if you're struggling to find the data you want.
   - (optional) __filters: list__ _= []_: This is a list of strings that should contain the hex codes of services that the user wishes to find. If you need more information to know what hex codes you'll want to use you'll want to refer to the [Bluetooth Specifications](https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Assigned_Numbers/out/en/Assigned_Numbers.pdf?v=1705211162426)
 
 ## Miscellaneous Functions
