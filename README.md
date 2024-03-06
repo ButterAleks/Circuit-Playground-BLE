@@ -2,7 +2,7 @@
 ## Table of Contents
 1. [What is the bluetooth_management Library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-bluetooth_management-library)
 2. [How does Bluetooth Low Energy (BLE) Work?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#how-does-bluetooth-low-energy-ble-work)
-3. [What is the adafruit_ble library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-adafruit_ble-library)
+3. [What is the adafruit_ble Library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-adafruit_ble-library)
 4. [What is the Bluetooth Manager?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-bluetooth-manager)
 5. [General Functions](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#general-functions)
 6. [Peripheral Functions](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#peripheral-functions)
@@ -15,7 +15,7 @@
 ## How does Bluetooth Low Energy (BLE) Work?
 
 
-## What is the adafruit_ble library?
+## What is the adafruit_ble Library?
 
 
 ## What is the Bluetooth Manager?
@@ -28,7 +28,7 @@
 > [!NOTE]
 > Once a connection to a device acting as a peripheral is made all of it's advertisements will stop broadcasting. This means that to connect to another device after a previous connection, you will need to start advertising again.
 - `start_advertising(advertisement: Advertisement)`: Begins sending out an advertisement as a peripheral.
-  - __advertisement: Advertisement__: This is an advertisement that should be created that the user that is then able to be picked up on by other Bluetooth devices. (For more information on how to make advertisements please look within the [What is the adafruit_ble library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-adafruit_ble-library) Section of this file)
+  - __advertisement: Advertisement__: This is an advertisement that should be created that the user that is then able to be picked up on by other Bluetooth devices. (For more information on how to make advertisements please look within the [What is the adafruit_ble Library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-adafruit_ble-library) Section of this file)
 - `stop_advertising()`: This will stop any currently active advertisements from continuing to be sent out
 
 ## Host Functions
