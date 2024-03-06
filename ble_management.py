@@ -256,7 +256,7 @@ class BluetoothManager:
     #
 
     # This converts from a boolean array of 6 in length into a number for characteristic properties
-    def _convert_properties_to_num(self, properties: list) -> int:
+    def convert_properties_to_num(self, properties: list) -> int:
         num = 0
         for i in range(0, 6):
             if properties[i]:
@@ -264,7 +264,7 @@ class BluetoothManager:
         return num
 
     # This converts from a number to a boolean array of 6 in length for characteristic properties
-    def _convert_num_to_properties(self, num: int) -> list:
+    def convert_num_to_properties(self, num: int) -> list:
         properties = [False] * 6
         
         binary = bin(num)[2:8]
