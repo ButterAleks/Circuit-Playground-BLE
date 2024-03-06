@@ -51,15 +51,15 @@
 - `connect(detected_devices: dict, device_name: string, print_debug: bool = False) -> BLEConnection`: This function allows a device acting as a host to connect to a peripheral device from a dictionary formatted like what start_scanning() returns. The device is specified by device_name. (which is case sensitive) This function returns a BLEConnection which allows you to do things including disconnect from the specified device. There is an internal reference to the current BLEConnection so there isn't really a need to store this value however.
   - __detected_devices: dict__: This is a dictionary that is formatted just like the dictionary returned from start_scanning(). This means that its keys are the names of peripheral devices and its values are the addresses of those peripheral devices.
   - __device_name: string__: This is how you specify the name of the device that you want to connect too, the string should match one of the keys within detected_devices which also means it's case sensitive
-  - __print_debug: bool__ _= False_: When true the function will print debug information about connecting to the specified device
+  - (optional) __print_debug: bool__ _= False_: When true the function will print debug information about connecting to the specified device
 - `disconnect(print_debug: bool = False)`: This function allows you to disconnect from a connected peripheral device.
-  - __print_debug: bool__ _= False_: When true the function will print debug information about disconnecting from the currently connected device
+  - (optional) __print_debug: bool__ _= False_: When true the function will print debug information about disconnecting from the currently connected device
 > [!IMPORTANT]
 > This function requires a peripheral device to be connected in order to work!
 - `discover_device_services(filters: list = []) -> tuple`: This function will return a tuple of discovered services found from a connected device.
   > [!NOTE]
   > The Bluetooth Specifications are just general guidelines. This means that a specific service may not contain what you expect or may not even be within the specifications. This is important to be aware of if you're struggling to find the data you want.
-  - __filters: list__ _= []_: This is a list of strings that should contain the hex codes of services that the user wishes to find. If you need more information to know what hex codes you'll want to use you'll want to refer to the [Bluetooth Specifications](https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Assigned_Numbers/out/en/Assigned_Numbers.pdf?v=1705211162426)
+  - (optional) __filters: list__ _= []_: This is a list of strings that should contain the hex codes of services that the user wishes to find. If you need more information to know what hex codes you'll want to use you'll want to refer to the [Bluetooth Specifications](https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Assigned_Numbers/out/en/Assigned_Numbers.pdf?v=1705211162426)
 
 ## Miscellaneous Functions
 > [!NOTE]
