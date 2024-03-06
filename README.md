@@ -25,7 +25,11 @@
 
 
 ## Peripheral Functions
-
+> [!NOTE]
+> Once a connection to a device acting as a peripheral is made all of it's advertisements will stop broadcasting. This means that to connect to another device after a previous connection, you will need to start advertising again.
+- `start_advertising(advertisement: Advertisement)`: Begins sending out an advertisement as a peripheral.
+  - __advertisement: Advertisement__: This is an advertisement that should be created that the user that is then able to be picked up on by other Bluetooth devices. (For more information on how to make advertisements please look within the [What is the adafruit_ble library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-adafruit_ble-library) Section of this file)
+- `stop_advertising()`: This will stop any currently active advertisements from continuing to be sent out
 
 ## Host Functions
 - `start_scanning(advertisements_to_collect: int = 10, buffer_size: int = 512, extended: bool = False, timeout: float = None, interval: float = 0.1, window: float = 0.1, minimum_rssi: int = -80, filter_no_name: bool = True, active: bool = True, print_debug: bool = False) -> dict`: This function allows a device acting as a host to start scanning for peripheral devices. This function returns a dictionary who's keys are the names of the devices found and the values are the addresses which can be used to connect to the devices.
