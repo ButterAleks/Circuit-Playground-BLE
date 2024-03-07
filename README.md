@@ -22,7 +22,28 @@
 
 
 ## General Functions
-
+- `get_bluetooth_name() -> string`: This function returns the device name for bluetooth
+- `get_bluetooth_transmission_power() -> int`: This function returns the transmission power for bluetooth
+- `get_bluetooth_address() -> bytes`: This function returns the address for bluetooth
+- `get_bluetooth_advertising_state() -> bool`: This function returns whether or not we're advertising
+- `get_bluetooth_connection_state() -> bool`: This function returns whether or not we're connected to another device
+- `create_service(uuid: string) -> Service`: This function returns a service created by the uuid specified by the user
+  - __uuid: string__: This is a string that should be formatted like a hex code to specify the kind of service you want to make. The type of service you make will not dictate it's characteristics, only how it is identified by other devices. If you need more information to know what hex codes you'll want to use you'll want to refer to the [Bluetooth Specifications](https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Assigned_Numbers/out/en/Assigned_Numbers.pdf?v=1705211162426)
+> [!NOTE]
+> The propeties of a characteristic determine how the characteristic can be interacted with, they are as follows:
+> | Bit (that makes up part of the number) | 6th (most significant bit) | 5th | 4th | 3rd | 2nd | 1st (least signficiant bit) |
+> | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+> | Name | Write No Response | Write | Read | Notify | Indicate | Broadcast |
+> | Description | Allows the value of the characteristic to be written too but no response will be sent back | Allows the value of the characteristic to be written too | Allows the value of the characteristic to be read from | Allows host to tell peripheral when it's value has been set by the host | Allows host to tell peripheral when it's value has been set by the host and makes the host wait for a response | Allows the characteristic to show up in advertising packets |
+- `add_characteristic_to_service(service: Service, uuid: string, properties: list = [False] * 6, read_perm: Attribute = Attribute.OPEN, write_perm: Attribute = Attribute.OPEN, max_length: int = 20, fixed_length: bool = False, user_description: string = None) -> Characteristic`: This function adds a characteristic to a service and returns it. There is no function to create a characteristic by itself because a characteristic can only be made when it's applied to a service.
+  - __service: Service__: The service to add an advertisement to
+  - __uuid: string__: This is a string that should be formatted like a hex code to specify the kind of characteristic you want. The type of characteristic you make will not dictate how it's value works, only how it is identified by other devices. If you need more information to know what hex codes you'll want to use you'll want to refer to the [Bluetooth Specifications](https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Assigned_Numbers/out/en/Assigned_Numbers.pdf?v=1705211162426)
+  - (optional) __properties: list__ _= [False] * 6_: This is a list of 6 boolean values which will be converted into a number to represent the properties of a characteristic for more information about what booleans mean what look at the note above
+  - (optional) __read_perm: Attribute__ _= Attribute.Open_: This represents the access of another device for reading from the characteristic. For information about the Attribute data type please look in the [What is the adafruit_ble Library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-adafruit_ble-library) Section of this file.
+  - (optional) __write_perm: Attribute__ _= Attribute.Open_: This represents the access of another device for writing to the characteristic. For information about the Attribute data type please look in the [What is the adafruit_ble Library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-adafruit_ble-library) Section of this file.
+  - (optional) __max_length: int__ _= 20_: The max amount of bytes the value of this characteristic can hold to represent its value
+  - (optional) __fixed_length: bool__ _= False_: When true the value of the characteristic will have a fixed length of bytes
+  - (optional) __user_description: string__ _= None_: This string allows the creator of the characteristic to provide any user a user-friendly description of the characteristic
 
 ## Peripheral Functions
 > [!NOTE]
