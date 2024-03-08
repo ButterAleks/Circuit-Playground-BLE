@@ -1,16 +1,27 @@
 # Circuit-Playground-BLE 
 ## Table of Contents
-1. [What is the bluetooth_management Library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-bluetooth_management-library)
-2. [How does Bluetooth Low Energy (BLE) Work?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#how-does-bluetooth-low-energy-ble-work)
-3. [What is the adafruit_ble Library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-adafruit_ble-library)
-4. [What is the Bluetooth Manager?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-bluetooth-manager)
-5. [General Functions](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#general-functions)
-6. [Peripheral Functions](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#peripheral-functions)
-7. [Host Functions](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#host-functions)
-8. [Miscellaneous Functions](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#miscellaneous-functions)
+1. [How to Install](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#how-to-install)
+2. [Prerequisites](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#prerequisites)
+3. [What is the bluetooth_management Library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-bluetooth_management-library)
+4. [How does Bluetooth Low Energy (BLE) Work?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#how-does-bluetooth-low-energy-ble-work)
+5. [What is the adafruit_ble Library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-adafruit_ble-library)
+6. [What is the Bluetooth Manager?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-bluetooth-manager)
+7. [General Functions](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#general-functions)
+8. [Peripheral Functions](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#peripheral-functions)
+9. [Host Functions](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#host-functions)
+10. [Miscellaneous Functions](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#miscellaneous-functions)
+
+## How to Install?
+In order to install this on a Bluefruit Circuit Playground, all you'll need to do is install the mpy file either directly from the repo or from an official release and then place it into the lib folder within the storage of the board.
+
+## Prerequisites
+This library needs the follow things in order to operate properly:
+- Circuit Python
+- The adafruit_ble library
+- And the _bleio core module that should come with Circuit Python
 
 ## What is the bluetooth_management Library?
-
+The bluetooth_management library is a library designed for Adafruit's Bluefruit Circuit Playground, developed in circuit python. I made this library because I was playing around with bluetooth and noticed that adafruit_ble the official library for the board relating to bluetooth was a bit lackluster in terms of features so I decided to make a library that works around it in order to allow for me and other people to actually be able to use the bluetooth capabilities. This library likely won't satisfy everybody and so you're encourage to just play around with it and maybe even work around it by seeing how it works by looking at the code here in the bluetooth_management.py file.
 
 ## How does Bluetooth Low Energy (BLE) Work?
 
