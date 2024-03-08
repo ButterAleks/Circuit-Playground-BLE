@@ -44,6 +44,30 @@
   - (optional) __max_length: int__ _= 20_: The max amount of bytes the value of this characteristic can hold to represent its value
   - (optional) __fixed_length: bool__ _= False_: When true the value of the characteristic will have a fixed length of bytes
   - (optional) __user_description: string__ _= None_: This string allows the creator of the characteristic to provide any user a user-friendly description of the characteristic
+> [!NOTE]
+> You don't need characteristic buffers or packet buffers in order to read or write to a characteristic. However these are still implemented if a more structured way of working with charactersitic data is desired.
+- `create_characteristic_buffer(characteristic: Characteristic, timeout: int = 1, buffer_size: int = 64) -> CharacteristicBuffer`: This function creates and returns a CharacteristicBuffer. A CharacteristicBuffer is a buffer that stores data from a characteristic when it is told to read from the characteristic.
+  - __characteristic: Characteristic__: The characteristic for the buffer to read from
+  - (optional) __timeout: int__ _= 1_: The time that the characteristic waits in seconds between characters
+  - (optional) __buffer_size: int__ _= 64_: The total amount of bytes that can represent the data within the buffer.
+- `create_packet_buffer(characteristic: Characteristic, buffer_size: int, max_packet_size: int) -> PacketBuffer`: This function creates and returns a PacketBuffer. A PacketBuffer is a buffer that writes data to a characteristic when it is told to read from the characteristic.
+  - __characteristic: Characteristic__: The characteristic for the buffer to read from
+  - (optional) __buffer_size: int__: The total amount of bytes that can represent the data within the buffer.
+  - (optional) __max_packet_size: int__: The total amount of bytes that a single packet can hold (this overrides the characteristic).
+- `read_from_characteristic_with_buffer(read_buffer: CharacteristicBuffer) -> bytes`: This function allows the user to read data from a characteristic with a CharacteristicBuffer and return as a sequence of bytes.
+  - __read_buffer: CharacteristicBuffer__: This is the buffer that is used to read data from a characteristic.
+- `read_from_characteristic(characteristic: Characteristic) -> bytearray`: This function allows the user to read data from a characteristic and return as an array of bytes.
+  - __characteristic: Characteristic__: This is the characteristic that will be read from
+- `write_to_characteristic_with_buffer(write_buffer: PacketBuffer, message: string, max_length: int = 20, clear_buffer: bool = True) -> int`: This allows the user to write to a characteristic using a PacketBuffer. This returns the total amount of bytes written to the characteristic.
+  - __write_buffer: PacketBuffer__: The packet buffer that will be used to write to a characterisitic
+  - __message: string__: The message to write to the characteristic.
+  - (optional) __max_length: int__ _= 20_: The max length of bytes that the characteristic can hold
+  - (optional) __clear_buffer: bool__ _= True_: If true this will clear the buffer before writing to it
+- `write_to_characteristic(characteristic: Characteristic, message: string, max_length: int = 20, clear_buffer: bool = True) -> bytearray`: This allows the user to write to a characteristic. This returns the value of the characteristic after it has been written to as an array of bytes
+  - __write_buffer: PacketBuffer__: The packet buffer that will be used to write to a characterisitic
+  - __message: string__: The message to write to the characteristic.
+  - (optional) __max_length: int__ _= 20_: The max length of bytes that the characteristic can hold
+  - (optional) __clear_buffer: bool__ _= True_: If true this will clear the buffer before writing to it (in this case the buffer is the value of the characteristic)
 
 ## Peripheral Functions
 > [!NOTE]
