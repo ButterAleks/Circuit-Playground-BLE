@@ -148,4 +148,4 @@ The bluetooth_management library is a library designed for Adafruit's Bluefruit 
 
 [^1]: [How does BLE Work?](https://www.spiceworks.com/tech/iot/articles/what-is-bluetooth-le/#_001)
 [^2]: [adafruit_ble documentation](https://docs.circuitpython.org/projects/ble/en/latest/api.html#adafruit_ble)
-[^3]: [Bluetooth Specifications](https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Assigned_Numbers/out/en/Assigned_Numbers.pdf?v=1705211162426)]
+[^3]: [Bluetooth Specifications](https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Assigned_Numbers/out/en/Assigned_Numbers.pdf?v=1705211162426)
