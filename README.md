@@ -30,7 +30,12 @@ The bluetooth_management library is a library designed for Adafruit's Bluefruit 
 
 
 ## What is the Bluetooth Manager?
+The Bluetooth Manager is the main class that holds all the functionality of the library, this was done so that way you only have to import one thing when importing the library. You can make a new instance of the Bluetooth Manager by calling `BluetoothManager()`. It is very not recommended to make multiple instances as this will likely cause conflictions due to there only being one Bluetooth chip on the Circuit Playground.
 
+The variables for the Bluetooth Manager are as follows:
+- __bluetooth_mode_peripheral__ _= False_: This boolean is the current mode of the device. If true it means that the device is acting as a peripheral. If false it means that the device is acting as a host.
+- __\_radio__ _= BLERadio()_: This variable holds the BLERadio() instance for the Manager however this is meant to be a private varaible as seen with the underscore at the beginning of it's name, so it isn't meant to be accessed by the user
+- __ble__ _= None_: This stores the BLEConnection that will be created when a connection to another device is made, the user likely won't need to use this variable but it is public just in case.
 
 ## General Functions
 - `get_bluetooth_name() -> string`: This function returns the device name for bluetooth
