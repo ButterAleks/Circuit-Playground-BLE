@@ -24,10 +24,21 @@ This library needs the follow things in order to operate properly:
 The bluetooth_management library is a library designed for Adafruit's Bluefruit Circuit Playground, developed in circuit python. I made this library because I was playing around with bluetooth and noticed that adafruit_ble the official library for the board relating to bluetooth was a bit lackluster in terms of features so I decided to make a library that works around it in order to allow for me and other people to actually be able to use the bluetooth capabilities. This library likely won't satisfy everybody and so you're encourage to just play around with it and maybe even work around it by seeing how it works by looking at the code here in the bluetooth_management.py file.
 
 ## How does Bluetooth Low Energy (BLE) Work?
+If the explanations aren't good enough as this briefly goes over some key concepts needed to understand this documentation, feel free to check the links in footnotes[^1] 1-3 as they contain more information about how BLE works
 
+  ### Discovery[^2]
+  Discovering other devices is done via broadcasting advertising packets on 3 seperate channels. These packets are sent multiple times over a period of time called the advertising interval. To reduce the chance of multiple consecutive collisions a random delay of up to 10 miliseconds is added to each advertising interval. A scanner listens during to a channel during a period of time called the scan window, which is periodically repeated every scan interval. Therefore the latency between advertising and discovery is based off the advertising interval, scan window, and the scan interval. 
+
+  ### GATT[^3]
+  All BLE devices use GATT, AKA the Generic Attribute Profile which is how BLE devices communicate data about themselves with each other. The following terminology: Host, Peripheral, Service, Characteristic, and Descriptors, are all things related to the GATT of a device.
+  - __Host__: Hosts are basically a form of server as multiple Peripherals can connect to a host. (However, this library does not natively support multiple peripherals connected at once so if you want to do that then you'll need to set up your own system to handle them, you'll also probably have to take inspiration from some of the host functions). Hosts can also scan for devices and discover services from another device in order to get characteristics from that device, so that way they can get and or write data to that device.
+  - __Peripheral__: Peripherals can advertise data about themselves to be discovered by Hosts. Once connected peripherals will stop advertising as they cannot connect to multiple Hosts. All peripherals can then do over the connection from there is disconnect from the host or read and or write to their characteristics.
+  - __Service__: A service is basically a collection of characteristics that all generally have different information about the same thing. An example would be a temperature sensor that has a service that holds characteristics with various kinds of temperature data.
+  - __Characterisitic__: A characteristic is a container for data. The data of a characteristic is stored in its `value` property. Characteristics also have specific properties, these are elaborated on in this file when information about them is more relevant, but for now the different types of properties of a characteristic are: `Write No Response`, `Write`, `Read`, `Notify`, `Indicate`, and `Broadcast`.
+  - __Descriptor__: A descriptor simply something that provides additional information about a device's characteristic for a human to interpret. A characteristic can have any number of descriptors and descriptors are completely optional when creating characteristics.
 
 ## What is the adafruit_ble Library?
-
+The adafruit_ble[^4] library is the offically supported BLE library created by adafruit for the Bluefruit Circuit Playground board for Circuit Python. However, if it weren't for this library than the library you're reading about right now wouldn't exist. This is because there are flaws in the offical library that actually made it kind of impossible to realistically use due to unforseen errors so I went ahead and made this so at least people had something that would work with another device. 
 
 ## What is the Bluetooth Manager?
 The Bluetooth Manager is the main class that holds all the functionality of the library, this was done so that way you only have to import one thing when importing the library. You can make a new instance of the Bluetooth Manager by calling `BluetoothManager()`. It is very not recommended to make multiple instances as this will likely cause conflictions due to there only being one Bluetooth chip on the Circuit Playground.
@@ -44,7 +55,7 @@ The variables for the Bluetooth Manager are as follows:
 - `get_bluetooth_advertising_state() -> bool`: This function returns whether or not we're advertising
 - `get_bluetooth_connection_state() -> bool`: This function returns whether or not we're connected to another device
 - `create_service(uuid: string) -> Service`: This function returns a service created by the uuid specified by the user
-  - __uuid: string__: This is a string that should be formatted like a hex code to specify the kind of service you want to make. The type of service you make will not dictate it's characteristics, only how it is identified by other devices. If you need more information to know what hex codes you'll want to use you'll want to refer to the Bluetooth Specifications[^3]
+  - __uuid: string__: This is a string that should be formatted like a hex code to specify the kind of service you want to make. The type of service you make will not dictate it's characteristics, only how it is identified by other devices. If you need more information to know what hex codes you'll want to use you'll want to refer to the Bluetooth Specifications[^5]
 
 > [!NOTE]
 > The propeties of a characteristic determine how the characteristic can be interacted with, they are as follows:
@@ -54,7 +65,7 @@ The variables for the Bluetooth Manager are as follows:
 > | Description | Allows the value of the characteristic to be written too but no response will be sent back | Allows the value of the characteristic to be written too | Allows the value of the characteristic to be read from | Allows host to tell peripheral when it's value has been set by the host | Allows host to tell peripheral when it's value has been set by the host and makes the host wait for a response | Allows the characteristic to show up in advertising packets |
 - `add_characteristic_to_service(service: Service, uuid: string, properties: list = [False] * 6, read_perm: Attribute = Attribute.OPEN, write_perm: Attribute = Attribute.OPEN, max_length: int = 20, fixed_length: bool = False, user_description: string = None) -> Characteristic`: This function adds a characteristic to a service and returns it. There is no function to create a characteristic by itself because a characteristic can only be made when it's applied to a service.
   - __service: Service__: The service to add an advertisement to
-  - __uuid: string__: This is a string that should be formatted like a hex code to specify the kind of characteristic you want. The type of characteristic you make will not dictate how it's value works, only how it is identified by other devices. If you need more information to know what hex codes you'll want to use you'll want to refer to the Bluetooth Specifications[^3]
+  - __uuid: string__: This is a string that should be formatted like a hex code to specify the kind of characteristic you want. The type of characteristic you make will not dictate how it's value works, only how it is identified by other devices. If you need more information to know what hex codes you'll want to use you'll want to refer to the Bluetooth Specifications[^5]
   - (optional) __properties: list__ _= [False] * 6_: This is a list of 6 boolean values which will be converted into a number to represent the properties of a characteristic for more information about what booleans mean what look at the note above
   - (optional) __read_perm: Attribute__ _= Attribute.Open_: This represents the access of another device for reading from the characteristic. For information about the Attribute data type please look in the [What is the adafruit_ble Library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-adafruit_ble-library) Section of this file.
   - (optional) __write_perm: Attribute__ _= Attribute.Open_: This represents the access of another device for writing to the characteristic. For information about the Attribute data type please look in the [What is the adafruit_ble Library?](https://github.com/ButterAleks/Circuit-Playground-BLE/blob/main/README.md#what-is-the-adafruit_ble-library) Section of this file.
@@ -136,7 +147,7 @@ The variables for the Bluetooth Manager are as follows:
 - `discover_device_services(filters: list = []) -> tuple`: This function will return a tuple of discovered services found from a connected device.
 > [!NOTE]
 > The Bluetooth Specifications are just general guidelines. This means that a specific service may not contain what you expect or may not even be within the specifications. This is important to be aware of if you're struggling to find the data you want.
-  - (optional) __filters: list__ _= []_: This is a list of strings that should contain the hex codes of services that the user wishes to find. If you need more information to know what hex codes you'll want to use you'll want to refer to the Bluetooth Specifications[^3]
+  - (optional) __filters: list__ _= []_: This is a list of strings that should contain the hex codes of services that the user wishes to find. If you need more information to know what hex codes you'll want to use you'll want to refer to the Bluetooth Specifications[^5]
 
 ## Miscellaneous Functions
 > [!NOTE]
@@ -152,5 +163,7 @@ The variables for the Bluetooth Manager are as follows:
   - __num: int__: a number that represents the properties of a characteristic. Each of the 6 bits of this number represent one of the six properties of the characteristic
 
 [^1]: [How does BLE Work?](https://www.spiceworks.com/tech/iot/articles/what-is-bluetooth-le/#_001)
-[^2]: [adafruit_ble documentation](https://docs.circuitpython.org/projects/ble/en/latest/api.html#adafruit_ble)
-[^3]: [Bluetooth Specifications](https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Assigned_Numbers/out/en/Assigned_Numbers.pdf?v=1705211162426)
+[^2]: [More detail on how Advertising works for BLE](https://en.wikipedia.org/wiki/Bluetooth_Low_Energy#Advertising_and_discovery)
+[^3]: [More detail on how GATT works for BLE](https://en.wikipedia.org/wiki/Bluetooth_Low_Energy#Software_model)
+[^4]: [adafruit_ble documentation](https://docs.circuitpython.org/projects/ble/en/latest/api.html#adafruit_ble)
+[^5]: [Bluetooth Specifications](https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Assigned_Numbers/out/en/Assigned_Numbers.pdf?v=1705211162426)
