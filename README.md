@@ -38,7 +38,31 @@ If the explanations aren't good enough as this briefly goes over some key concep
   - __Descriptor__: A descriptor simply something that provides additional information about a device's characteristic for a human to interpret. A characteristic can have any number of descriptors and descriptors are completely optional when creating characteristics.
 
 ## What is the adafruit_ble Library?
-The adafruit_ble[^4] library is the offically supported BLE library created by adafruit for the Bluefruit Circuit Playground board for Circuit Python. However, if it weren't for this library than the library you're reading about right now wouldn't exist. This is because there are flaws in the offical library that actually made it kind of impossible to realistically use due to unforseen errors so I went ahead and made this so at least people had something that would work with another device. 
+The adafruit_ble[^4] library is the offically supported BLE library created by adafruit for the Bluefruit Circuit Playground board for Circuit Python. However, if it weren't for this library than the library you're reading about right now wouldn't exist. This is because there are flaws in the offical library that actually made it kind of impossible to realistically use due to unforseen errors caused by the library so I went ahead and made this so at least people had something that would work with another device. 
+
+> [!IMPORTANT]
+> Everything mentioned in this section must be imported from the adafruit_ble library as it is not natively part of the bluetooth_management library. This shouldn't be a problem since the bluetooth_management library needs the adafruit_ble library to function anyway. 
+
+This section will really only cover what this library uses from the adafruit_ble library as that's really the only stuff that matters within the context of this library.
+
+  ### Attributes
+  You don't really create any instances of Attributes, you just call the class in order to get various constants needed to provide values for various security levels. The types of security that can be specified with Attributes are as follows:
+  - `Attribute.NO_ACCESS`: Indicates that access is not allowed
+  - `Attribute.OPEN`: Indicates that there is no security
+  - `Attribute.ENCRYPT_NO_MITM`: Indicates unauthenticated encryption, without man-in-the-middle protection
+  - `Attribute.ENCRYPT_WITH_MITM`: Indicates authenticated encryption, with man-in-the-middle protection
+  - `Attribute.LESC_NO_MITM`: Indicates LESC encryption, with man-in-the-middle protection
+  - `Attribute.SIGNED_NO_MITM`: Indicates unauthenticated data signing, without man-in-the-middle protection
+  - `Attribute.SIGNED_WITH_MITM`: Indicates authenticated data signing, without man-in-the-middle protection
+
+  ### Advertisements
+  Advertisements are how you allow for a peripheral to be discovered, in order to do this you just call a class using it's name like a function. EX `Advertisement()`
+  There are various types of advertisements they are as follows:
+  - __Advertisement__: The main basic kind of advertisement, has no special properties
+  - __ProvideServicesAdvertisement__: This specific advertisement says what services become available upon connection by also passsing in a Service when creating it. EX `ProvideServicesAdvertisement(service)`
+  - __SolicitServicesAdvertisement__: This specific advertisement tells other devices what services it would like to work with upon connection and is created similarly to a ProvideServicesAdvertisement but instead this time it's `SolicitServicesAdvertisement(service)`
+
+  All Advertisements inherit from the base Advertisement class, this means all the advertisements have the same base properties. I don't think I can describe those properties any better than the current documentation for the library so just click [here](https://docs.circuitpython.org/projects/ble/en/latest/advertising.html#adafruit_ble.advertising.Advertisement) for more information
 
 ## What is the Bluetooth Manager?
 The Bluetooth Manager is the main class that holds all the functionality of the library, this was done so that way you only have to import one thing when importing the library. You can make a new instance of the Bluetooth Manager by calling `BluetoothManager()`. It is very not recommended to make multiple instances as this will likely cause conflictions due to there only being one Bluetooth chip on the Circuit Playground.
@@ -46,7 +70,7 @@ The Bluetooth Manager is the main class that holds all the functionality of the 
 The variables for the Bluetooth Manager are as follows:
 - __bluetooth_mode_peripheral__ _= False_: This boolean is the current mode of the device. If true it means that the device is acting as a peripheral. If false it means that the device is acting as a host.
 - __\_radio__ _= BLERadio()_: This variable holds the BLERadio() instance for the Manager however this is meant to be a private varaible as seen with the underscore at the beginning of it's name, so it isn't meant to be accessed by the user
-- __ble__ _= None_: This stores the BLEConnection that will be created when a connection to another device is made, the user likely won't need to use this variable but it is public just in case.
+- __ble__ _= None_: This stores the BLEConnection that will be created when a connection to another device is made, the user likely won't need to use this variable but it is public just in case. If you want more information about the BLEConnection object please refer to the adafruit_ble library documentation[^4]
 
 ## General Functions
 - `get_bluetooth_name() -> string`: This function returns the device name for bluetooth
