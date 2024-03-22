@@ -27,7 +27,7 @@ while True:
         # This code reads and writes to the current characteristic based on whether or not we are in host or peripheral mode
         if ble_manager.get_bluetooth_connection_state():
             # Get the properties of the characteristic
-            properties = ble_manager._convert_num_to_properties(h_characteristic.properties)
+            properties = ble_manager.convert_num_to_properties(h_characteristic.properties)
             
             # Check to see if we can read from the characteristic
             if properties[2]:
@@ -44,7 +44,7 @@ while True:
     
     # If we press button A then begin connecting to a device
     if cp.button_a:
-        # Make sure we aren't aready connected to a device
+        # Make sure we aren't already connected to a device
         if not ble_manager.get_bluetooth_connection_state():
                 # Catch if we have any memory related errors when scanning because we only have so much memory
                 try:
@@ -118,14 +118,13 @@ while True:
                             
                     # Get the first useable characteristic in the service
                     for i in range(len(h_service.characteristics)):
-                        properties = ble_manager._convert_num_to_properties(h_service.characteristics[i].properties)
+                        properties = ble_manager.convert_num_to_properties(h_service.characteristics[i].properties)
                         
                         # Check if this characteristic exists and if so make it the one that we can use
                         if h_service.characteristics[i] != None and ((properties[0] or properties[1]) or properties[2]):
                             h_characteristic = h_service.characteristics[i]
-                            h_read_buffer = ble_manager.create_characteristic_buffer(h_characteristic)
-                        
-                    
+                            break
+                                            
                 except BluetoothError as b:
                     # If we get a Bluetooth Error for whatever reason than tell the user something messed up
                     print("ERROR: something went wrong when setting up data transfer with peripheral.\nException:", b)
